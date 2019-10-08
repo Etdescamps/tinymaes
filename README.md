@@ -16,7 +16,8 @@ The algorithm MA-ES is described in this article:
 ## Features
 TinyMAES has been written so it can be easily embedded within an application.
 It does not use any global variable, so it is possible to run multiple instance
-of this algorithm in different threads.
+of this algorithm in different threads. It uses its own Random Number Generator
+and does not made any memory allocations after the initialisation call.
 
 This library contains:
  * A Mersenne Twister Random Number Generator that is based on
