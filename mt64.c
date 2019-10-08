@@ -34,7 +34,7 @@ static void _twist(MT64_S *mt) {
   int i;
   for(i = 0; i < N_M; i++)
     mt->state[i] = twist3(mt->state[i], mt->state[i+1], mt->state[i+M]);
-  for(i = N_M; i < N; i++) 
+  for(i = N_M; i < N-1; i++) 
     mt->state[i] = twist3(mt->state[i], mt->state[i+1], mt->state[i-N_M]);
   mt->state[N-1] = twist3(mt->state[N-1], mt->state[0], mt->state[M-1]);
   mt->pos = 0;

@@ -35,6 +35,8 @@ typedef struct {
 // Allocate and init the optimiser structure
 TINYMAES_S *TINYMAES_Create(int nDim, int lambda, int mu, int weights, uint64_t seed);
 
+void TINYMAES_Free(TINYMAES_S *maes);
+
 // Update population
 //   idx[mu] -> best individiual ordered from the best to the worst
 //              (if idx == NULL, it regenerates X using the same mean and covariance)
@@ -43,7 +45,6 @@ double *TINYMAES_NextStep(TINYMAES_S *maes, int *orderIdx);
 
 // Set initial start point
 void TINYMAES_SetX0(TINYMAES_S *maes, double *x0);
-
 
 #endif
 

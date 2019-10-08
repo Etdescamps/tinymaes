@@ -15,9 +15,8 @@ TINYMAES_S *TINYMAES_Create(int nDim, int lambda, int mu, int weights, uint64_t 
   double val;
   size_t sX = nDim*MAX(nDim,lambda);
   // Compute the total amount of memory to be allocated
-  size_t size = sizeof(TINYMAES_S);
-  size += sizeof(double)*(nDim*(nDim + 2) + mu + 2*sX);
-  maes = (TINYMAES_S *) malloc(size);
+  size_t size = sizeof(double)*(nDim*(nDim + 2) + mu + 2*sX);
+  maes = (TINYMAES_S *) malloc(size + sizeof(TINYMAES_S));
   // Set size parameters
   maes->nDim = nDim; maes -> mu = mu; maes->lambda = lambda;
   // Set the pointers to the right positions
@@ -28,7 +27,7 @@ TINYMAES_S *TINYMAES_Create(int nDim, int lambda, int mu, int weights, uint64_t 
   maes->ps = &maes->X0[nDim];
   maes->weights = &maes->ps[nDim];
   // Init the M, X0, X, Z and ps to 0
-  memset(maes->M, 0, sizeof(double)*nDim*(nDim + 2*lambda + 1));
+  memset(maes->M, 0, size);
   // Set M diagonal to 1 (M = Id)
   for(i = 0; i < nDim; i++)
     maes->M[i+nDim*i] = 1;
@@ -66,6 +65,10 @@ TINYMAES_S *TINYMAES_Create(int nDim, int lambda, int mu, int weights, uint64_t 
   maes->nStep = 0;
   MAES_RANDOM_INIT(&maes->rnd, seed);
   return maes;
+}
+
+void TINYMAES_Free(TINYMAES_S *maes) {
+  free(maes);
 }
 
 void TINYMAES_SetX0(TINYMAES_S *maes, double *x0) {
@@ -146,7 +149,7 @@ double *TINYMAES_NextStep(TINYMAES_S *maes, int *idx) {
       for(k = 0; k < maes->nDim; k++) {
         s += maes->M[k+j*maes->nDim]*maes->Z[k+i*maes->nDim];
       }
-      maes->X[j+i*maes->lambda] = maes->sigma*s + maes->X0[j];
+      maes->X[j+i*maes->nDim] = maes->sigma*s + maes->X0[j];
     }
   }
   return maes->X;

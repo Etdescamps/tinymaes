@@ -15,7 +15,7 @@ inline static int _comp(const double *u, const double *v, int nD) {
 static void _insert_bottom(const double *X, int nD, int id, int *heap, int nHeap) {
   const double *v = &X[id*nD];
   int i, j, k;
-  for(i = nHeap; i; i = j) {
+  for(i = nHeap; i >> 1; i = j) {
     j = i >> 1;
     k = heap[j-1];
     if(_comp(v, &X[k*nD], nD) <= 0)
@@ -75,7 +75,8 @@ void heapsort_mu(const double *X, int nD, int lambda, int *idx, int mu) {
   int i, idL;
   const double *vTop;
   // Insert the first mu element into the binary heap tree
-  for(i = 0; i < mu; i++) {
+  idx[0] = 0;
+  for(i = 1; i < mu; i++) {
     _insert_bottom(X, nD, i, idx, i+1);
   }
   vTop = &X[idx[0]*nD];
