@@ -2,18 +2,19 @@
 #include "tinymaes.h"
 #include "heapsort.h"
 
-const int N = 30, SEED = 12345, nGMax = 1024;
+const int N = 30, SEED = 12345, nGMax = 400;
 const int lambda = 4*N*N, mu = 2*N*N;
 
 static double frosenbrock(double *X) {
-  double s, v;
+  double s = 0, v;
   int i;
-  v = X[0] - 1;
-  s = v*v;
   for(i = 1; i < N; i++) {
+    v = X[i-1]-1;
+    s += v*v;
     v = X[i-1]*X[i-1] - X[i];
     s += 100*v*v;
   }
+  return s;
 }
 
 int main(int argc, char **argv) {
@@ -26,7 +27,7 @@ int main(int argc, char **argv) {
       F[i] = frosenbrock(&X[i*N]);
     heapsort_mu(F, 1, lambda, idx, mu);
     k = idx[0];
-    printf("%f: ", F[k]);
+    printf("%d %e: ", nGen, F[k]);
     for(i = 0; i < N; i++)
       printf("%f ", X[k*N+i]);
     printf("\n");

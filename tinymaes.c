@@ -11,7 +11,7 @@ const double _alphaCov = 2.0;
 TINYMAES_S *TINYMAES_Create(int nDim, int lambda, int mu, int weights, uint64_t seed) {
   int i, j;
   TINYMAES_S *maes;
-  double sumW, sumW2; // Sum of the weights
+  double sumW; // Sum of the weights
   double val;
   size_t sX = nDim*MAX(nDim,lambda);
   // Compute the total amount of memory to be allocated
@@ -38,12 +38,12 @@ TINYMAES_S *TINYMAES_Create(int nDim, int lambda, int mu, int weights, uint64_t 
       break;
     case MAES_W_LINEAR:
       for(i = 0; i < mu; i++)
-        maes->weights[i] = mu - 0.5 -i;
+        maes->weights[i] = 0.5 + i;
       break;
     case MAES_W_SUPERLINEAR:
       val = log(MAX(mu, lambda/2) + 0.5);
       for(i = 0; i < mu; i++)
-        maes->weights[i] = val - log(i+1);
+        maes->weights[i] = val - log(mu-i);
       break;
     default:
       free(maes);
@@ -54,10 +54,10 @@ TINYMAES_S *TINYMAES_Create(int nDim, int lambda, int mu, int weights, uint64_t 
     sumW += maes->weights[i];
   for(i = 0; i < mu; i++)
     maes->weights[i] = maes->weights[i]/sumW;
-  sumW2 = 0;
+  sumW = 0;
   for(i = 0; i < mu; i++)
-    sumW2+= maes->weights[i]*maes->weights[i];
-  maes->mueff = 1/sumW2;
+    sumW += maes->weights[i]*maes->weights[i];
+  maes->mueff = 1/sumW;
   maes->chiN = sqrt(nDim)*(1-1/(4*nDim)+1/(21*nDim*nDim));
   maes->c1 = _alphaCov/((nDim+1.3)*(nDim+1.3) + maes->mueff);
   maes->cs = (maes->mueff + 2)/(maes->mueff + nDim + 5);
@@ -88,14 +88,14 @@ double *TINYMAES_NextStep(TINYMAES_S *maes, int *idx) {
     for(j = 0; j < maes->nDim; j++)
       maes->X0[j] = 0;
     for(i = 0; i < maes->mu; i++) {
-      k = idx[i];
+      k = idx[maes->mu - i - 1];
       s = maes->weights[i];
       for(j = 0; j < maes->nDim; j++)
         maes->X0[j] += s*maes->X[j+k*maes->nDim];
     }
     // X <- Z[idx][:]^t
     for(i = 0; i < maes->mu; i++) {
-      k = idx[i];
+      k = idx[maes->mu - i - 1];
       for(j = 0; j < maes->nDim; j++)
         maes->X[i+j*maes->mu] = maes->Z[j+k*maes->nDim];
     }
@@ -103,19 +103,20 @@ double *TINYMAES_NextStep(TINYMAES_S *maes, int *idx) {
     b = 1 - maes->cs;
     // Compute the new value of ps using previous value and <Z>_w
     for(j = 0; j < maes->nDim; j++) {
-      maes->ps[j] = b*maes->ps[j];
+      s = 0;
       for(i = 0; i < maes->mu; i++)
-        maes->ps[j] += maes->weights[i]*a*maes->X[i+j*maes->mu];
+        s += maes->weights[i]*maes->X[i+j*maes->mu];
+      maes->ps[j] = b*maes->ps[j] + a*s;
     }
     // Compute the new covariance matrix
     // Determine symmetric matrix DM = Id + c_1/2*(s*s^t - Id)
     //                               + c_w/2*(<z*z^t>_w - Id)
     // Determine only the upper part
     for(i = 0; i < maes->nDim; i++) {
-      double d = -1, *vi = &maes->X[i*maes->mu];
+      double d = 0, *vi = &maes->X[i*maes->mu];
       for(k = 0; k < maes->mu; k++)
         d += maes->weights[k]*vi[k]*vi[k];
-      maes->Z[i+i*maes->nDim] = 1 + 0.5*maes->cw*d
+      maes->Z[i+i*maes->nDim] = 1 + 0.5*maes->cw*(d-1)
                               + 0.5*maes->c1*(maes->ps[i]*maes->ps[i]-1);
       for(j = i+1; j < maes->nDim; j++) {
         double *vj = &maes->X[j*maes->mu];
