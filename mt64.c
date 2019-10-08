@@ -60,7 +60,7 @@ inline static double _nextD(MT64_S *mt) {
   union {
     uint64_t u;
     double f;
-  } y = {_nextI64(mt)};
+  } y = {0x3ff0000000000000ULL | (_nextI64(mt) >> 10)};
   return y.f - 1.0;
 }
 

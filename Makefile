@@ -1,6 +1,7 @@
 CC = gcc
 AR = ar rcs
-CFLAGS = -O2 -funroll-loops
+#CFLAGS = -O2 -funroll-loops
+CFLAGS = -ggdb
 LDFLAGS = -lm
 RM = rm -f
 PREFIX = /usr/local

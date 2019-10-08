@@ -45,11 +45,11 @@ static void _put_top(const double *X, int nD, int id, int *heap, int nHeap) {
       l = _comp(&X[k1*nD], &X[k2*nD], nD);
       // If they are equals, both max bit are set
       if(l >= 0) {
-        k1 = k1 | 0x8000000;
+        k1 = k1 | 0x80000000;
         heap[j-1] = k1;
       }
       if(l <= 0) {
-        k2 = k2 | 0x8000000;
+        k2 = k2 | 0x80000000;
         heap[j] = k2;
       }
     }
@@ -86,7 +86,7 @@ void heapsort_mu(const double *X, int nD, int lambda, int *idx, int mu) {
     }
   }
   for(i = mu-1; i > 0; i--) {
-    idL = idx[i];
+    idL = idx[i] & 0x7fffffff;
     idx[i] = idx[0];
     _put_top(X, nD, idL, idx, i);
   }
