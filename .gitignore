@@ -1,0 +1,7 @@
+.*.swp
+*.o
+*.gch
+*.bak
+build/
+CMakeLists.txt.user
+
