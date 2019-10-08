@@ -85,6 +85,16 @@ TINYMAES_S *TINYMAES_Create(int nDim, int lambda, int mu, int weights, uint64_t 
   return maes;
 }
 
+void TINYMAES_Reset(TINYMAES_S *maes) {
+  int i;
+  memset(maes->M, 0, sizeof(double)*maes->nDim*maes->nDim);
+  // Set M diagonal to 1 (M = Id)
+  for(i = 0; i < maes->nDim; i++)
+    maes->M[i+maes->nDim*i] = 1;
+  memset(maes->ps, 0, sizeof(double)*maes->nDim);
+  memset(maes->X0, 0, sizeof(double)*maes->nDim);
+}
+
 void TINYMAES_Free(TINYMAES_S *maes) {
   free(maes);
 }

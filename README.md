@@ -14,11 +14,14 @@ The algorithm MA-ES is described in this article:
 > published in IEEE TRANSATIONS ON EVOLUTIONARY COMPUTATION, VOL. 21 no. 5, OCTOBER 2017
 
 ## Features
+TinyMAES has been written so it can be easily embedded within an application.
+It does not use any global variable, so it is possible to run multiple instance
+of this algorithm in different threads.
+
 This library contains:
  * A Mersenne Twister Random Number Generator that is based on
    "Tables of 64-bit Mersenne Twisters" by T. Nishimura
    (published on ACM Transactions on Modeling and Computer Simulation 10. (2000))
  * A heap sort function that is especially efficient when lambda >> mu.
-
 
 

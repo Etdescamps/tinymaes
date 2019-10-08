@@ -52,7 +52,11 @@ typedef struct {
 // Allocate and init the optimiser structure
 TINYMAES_S *TINYMAES_Create(int nDim, int lambda, int mu, int weights, uint64_t seed);
 
+// Free the structure
 void TINYMAES_Free(TINYMAES_S *maes);
+
+// Reset the covariance matrix, ps and X0 to their initial values
+void TINYMAES_Reset(TINYMAES_S *maes);
 
 // Update population
 //   idx[mu] -> best individiual ordered from the best to the worst
