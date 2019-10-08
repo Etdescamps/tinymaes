@@ -49,12 +49,15 @@ TINYMAES_S *TINYMAES_Create(int nDim, int lambda, int mu, int weights, uint64_t 
       free(maes);
       return NULL;
   }
-  sumW = 0;
-  for(i = 0; i < mu; i++) {
+  sumW = 0; 
+  for(i = 0; i < mu; i++)
     sumW += maes->weights[i];
+  for(i = 0; i < mu; i++)
+    maes->weights[i] = maes->weights[i]/sumW;
+  sumW2 = 0;
+  for(i = 0; i < mu; i++)
     sumW2+= maes->weights[i]*maes->weights[i];
-  }
-  maes->mueff = sumW*sumW/sumW2;
+  maes->mueff = 1/sumW2;
   maes->chiN = sqrt(nDim)*(1-1/(4*nDim)+1/(21*nDim*nDim));
   maes->c1 = _alphaCov/((nDim+1.3)*(nDim+1.3) + maes->mueff);
   maes->cs = (maes->mueff + 2)/(maes->mueff + nDim + 5);

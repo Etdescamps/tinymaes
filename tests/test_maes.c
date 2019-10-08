@@ -3,7 +3,7 @@
 #include "heapsort.h"
 
 const int N = 30, SEED = 12345, nGMax = 1024;
-const int lambda = 4*N, mu = 2*N;
+const int lambda = 4*N*N, mu = 2*N*N;
 
 static double frosenbrock(double *X) {
   double s, v;
@@ -24,13 +24,13 @@ int main(int argc, char **argv) {
   for(nGen = 0; nGen < nGMax; nGen++) {
     for(i = 0; i < lambda; i++)
       F[i] = frosenbrock(&X[i*N]);
-    heapsort_mu(X, N, lambda, idx, mu);
+    heapsort_mu(F, 1, lambda, idx, mu);
     k = idx[0];
     printf("%f: ", F[k]);
     for(i = 0; i < N; i++)
       printf("%f ", X[k*N+i]);
     printf("\n");
-    TINYMAES_NextStep(maes, idx);
+    X = TINYMAES_NextStep(maes, idx);
   }
   TINYMAES_Free(maes);
 }
