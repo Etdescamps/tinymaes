@@ -5,8 +5,8 @@ TinyMAES is a lightweight library for non-linear mono-objective optimisation
 written in standard C using only the functions from the standard C library,
 so it does not rely on external dependencies.
 
-It uses the MA-ES algorithm that is a variant of [CMA-ES](http://cma.gforge.inria.fr/)
-that does not require the eigendecompostion of matrices.
+It uses the MA-ES algorithm, a variant of [CMA-ES](http://cma.gforge.inria.fr/)
+without eigendecompostion of matrices.
 
 The algorithm MA-ES is described in this article:
 > "Simplify Your Covariance Matrix Adaptation Evolution Strategy"
