@@ -163,17 +163,23 @@ double *TINYMAES_NextStep(TINYMAES_S *maes, int *idx) {
     maes->sigma *= exp(maes->cs/maes->dSigma*(sqrt(s)/maes->chiN-1));
     maes->nStep++;
   }
-  MAES_RANDOM_NORMAL(&maes->rnd, maes->Z, maes->nDim*maes->lambda);
-  for(i = 0; i < maes->lambda; i++) {
+  return TINYMAES_Resample(maes, 0, maes->lambda);
+}
+
+double *TINYMAES_Resample(TINYMAES_S *maes, int id0, int nIds) {
+  double *Z = &maes->Z[id0*maes->nDim], *X = &maes->X[id0*maes->nDim];
+  double s;
+  int i, j, k;
+  MAES_RANDOM_NORMAL(&maes->rnd, Z, maes->nDim*nIds);
+  for(i = 0; i < nIds; i++) {
     for(j = 0; j < maes->nDim; j++) {
       s = 0;
       for(k = 0; k < maes->nDim; k++) {
-        s += maes->M[k+j*maes->nDim]*maes->Z[k+i*maes->nDim];
+        s += maes->M[k+j*maes->nDim]*Z[k+i*maes->nDim];
       }
-      maes->X[j+i*maes->nDim] = maes->sigma*s + maes->X0[j];
+      X[j+i*maes->nDim] = maes->sigma*s + maes->X0[j];
     }
   }
-  return maes->X;
+  return X;
 }
-
 
