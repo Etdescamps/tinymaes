@@ -14,7 +14,7 @@
  */
 
 /*
- * This test try to reproduce the results found in the article
+ * This test try to reproduce the results found in the article:
  * "Simplify Your Covariance Matrix Adaptation Evolution Strategy"
  * by Hans-Georg Beyer and Bernhard Sendhoff
  * published in IEEE TRANSATIONS ON EVOLUTIONARY COMPUTATION, VOL. 21 no. 5, OCTOBER 2017
