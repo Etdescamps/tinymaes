@@ -24,7 +24,7 @@
 const double _alphaCov = 2.0;
 
 TINYMAES_S *TINYMAES_Create(int nDim, int lambda, int mu, int weights, uint64_t seed) {
-  int i, j;
+  int i;
   TINYMAES_S *maes;
   double sumW; // Sum of the weights
   double val;
@@ -128,37 +128,39 @@ double *TINYMAES_NextStep(TINYMAES_S *maes, int *idx) {
     //                               + c_w/2*(<z*z^t>_w - Id)
     // Determine only the upper part
     for(i = 0; i < maes->nDim; i++) {
-      double d = 0, *vi = &maes->X[i*maes->mu];
+      double *vi = &maes->X[i*maes->mu];
+      s = 0;
       for(k = 0; k < maes->mu; k++)
-        d += maes->weights[k]*vi[k]*vi[k];
-      maes->Z[i+i*maes->nDim] = 1 + 0.5*maes->cw*(d-1)
+        s += maes->weights[k]*vi[k]*vi[k];
+      maes->Z[i+i*maes->nDim] = 1 + 0.5*maes->cw*(s-1)
                               + 0.5*maes->c1*(maes->ps[i]*maes->ps[i]-1);
       for(j = i+1; j < maes->nDim; j++) {
         double *vj = &maes->X[j*maes->mu];
-        d = 0;
+        s = 0;
         for(k = 0; k < maes->mu; k++)
-          d += maes->weights[k]*vi[k]*vj[k];
-        maes->Z[j+i*maes->nDim] = 0.5*maes->cw*d + 0.5*maes->c1*maes->ps[i]*maes->ps[j];
+          s += maes->weights[k]*vi[k]*vj[k];
+        maes->Z[j+i*maes->nDim] = 0.5*maes->cw*s + 0.5*maes->c1*maes->ps[i]*maes->ps[j];
       }
     }
     // copy the upper part of DM to the lower part
-    for(i = 1; i < maes->nDim; i++)
+    for(i = 0; i < maes->nDim; i++)
       for(j = i+1; j < maes->nDim; j++)
         maes->Z[i+j*maes->nDim] = maes->Z[j+i*maes->nDim];
     // Compute D = M*DM
+    // M is stored row wise and Z is symmetrical -> the matrix is computed by lines
     for(i = 0; i < maes->nDim; i++)
       for(j = 0; j < maes->nDim; j++) {
-        double d = 0;
-        for(k = 0; k < maes->nDim; k++) // Z symmetrical so we use the most efficient option
-          d += maes->M[k+i*maes->nDim]*maes->Z[k+j*maes->nDim];
-        maes->X[j+i*maes->nDim] = d;
+        s = 0;
+        for(k = 0; k < maes->nDim; k++)
+          s += maes->M[k+i*maes->nDim]*maes->Z[k+j*maes->nDim];
+        maes->X[j+i*maes->nDim] = s;
       }
     // Copy the resulting matrix into M
     memcpy((void*) maes->M, (void*) maes->X, sizeof(double)*maes->nDim*maes->nDim);
     s = 0;
     for(j = 0; j < maes->nDim; j++)
       s += maes->ps[j]*maes->ps[j];
-    maes->sigma = maes->sigma*exp(maes->cs/maes->dSigma*(sqrt(s)/maes->chiN-1));
+    maes->sigma *= exp(maes->cs/maes->dSigma*(sqrt(s)/maes->chiN-1));
     maes->nStep++;
   }
   MAES_RANDOM_NORMAL(&maes->rnd, maes->Z, maes->nDim*maes->lambda);

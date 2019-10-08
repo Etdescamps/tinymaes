@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -O2 -funroll-loops
-#CFLAGS = -ggdb -fsanitize=address
+#CFLAGS = -O2 -funroll-loops -Wall
+CFLAGS = -ggdb -fsanitize=address -Wall
 RM = rm -f
 ALL_TESTS = test_sort test_maes
 

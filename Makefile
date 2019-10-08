@@ -1,7 +1,7 @@
 CC = gcc
 AR = ar rcs
-CFLAGS = -O2 -funroll-loops
-#CFLAGS = -ggdb -fsanitize=address
+#CFLAGS = -O2 -funroll-loops -Wall
+CFLAGS = -ggdb -fsanitize=address -Wall
 LDFLAGS = -lm
 RM = rm -f
 PREFIX = /usr/local
