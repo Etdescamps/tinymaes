@@ -79,3 +79,13 @@ X = TINYMAES_NextStep(maes, idx);
 
 Once the objective reached, the allocated structure must be freed with the procedure `TINYMAES_Free`.
 
+### Using the Random Number Generator
+You can sample integers and reals using the sampler embedded within `TINYMAES_S`
+using the macros `MAES_RANDOM_INT`, `MAES_RANDOM_REAL` and `MAES_RANDOM_NORMAL`,
+this will permit to reproduce the results with the same seed.
+
+If you need multiple threads, you can use the main thread to generate the
+seed for each other thread. The threads can have their own random number generator
+state.
+
+
