@@ -58,7 +58,7 @@ To process the evaluation strategy, we compute an array containing list of ident
 of the `mu` best individuals. The identifier of the first individual is `0`, and those of the k-th
 individual is `k-1`.
 
-This list can be obtained by using the function `heapsort_mu`:
+This list can be obtained by using the function `heapsort_mu` that is declared in the `heapsort.h` header:
 
 ```C
 heapsort_mu(F, nObjectives, lambda, idx, mu)
@@ -77,5 +77,5 @@ generate a new population of individuals using the command `TINYMAES_NextStep`:
 X = TINYMAES_NextStep(maes, idx);
 ```
 
-Once the objective reach, you should free the allocated structure using the procedure `TINYMAES_Free`.
+Once the objective reached, the allocated structure must be freed with the procedure `TINYMAES_Free`.
 
