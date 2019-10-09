@@ -17,7 +17,7 @@
  * This test try to reproduce the results found in the article:
  * "Simplify Your Covariance Matrix Adaptation Evolution Strategy"
  * by Hans-Georg Beyer and Bernhard Sendhoff
- * published in IEEE TRANSATIONS ON EVOLUTIONARY COMPUTATION, VOL. 21 no. 5, OCTOBER 2017
+ * published in IEEE TRANSACTIONS ON EVOLUTIONARY COMPUTATION, VOL. 21 no. 5, OCTOBER 2017
  *
  * It tries to reproduce the results Figure 7 for the function Rosenbrock with N=30
  * and lambda = 4*N, mu = 2*N, with an initial X0 of (1,...1)
@@ -27,11 +27,11 @@
 #include "tinymaes.h"
 #include "heapsort.h"
 
-const int N = 30, SEED = 1234567, nGMax = 4000;
+const int N = 30, SEED = 1234567, nGMax = 3000;
 const int lambda = 4*N, mu = 2*N;
 const double target = 1e-12;
 
-static double frosenbrock(double *X) {
+static double frosenbrock(const double *X) {
   double s = 0, v;
   int i;
   for(i = 1; i < N; i++) {
@@ -46,7 +46,8 @@ static double frosenbrock(double *X) {
 int main(int argc, char **argv) {
   TINYMAES_S *maes = TINYMAES_Create(N, lambda, mu, MAES_W_SUPERLINEAR, SEED);
   int nGen, i, k, idx[mu];
-  double *X = TINYMAES_NextStep(maes, NULL), X0[N];
+  const double *X = TINYMAES_NextStep(maes, NULL);
+  double X0[N];
   double F[lambda];
   for(i = 0; i < N; i++)
     X0[i] = 1;
@@ -60,11 +61,16 @@ int main(int argc, char **argv) {
     for(i = 0; i < N; i++)
       printf("%f ", X[k*N+i]);
     printf("\n");
-    if(F[k] < target)
-      break;
+    if(F[k] < target) {
+      TINYMAES_Free(maes);
+      printf("Optimization with MA-ES: Test OK\n");
+      return 0;
+    }
     X = TINYMAES_NextStep(maes, idx);
   }
   TINYMAES_Free(maes);
+  printf("Optimization with MA-ES: Does not converge in reasonable number of steps\n");
+  return -1;
 }
 
 

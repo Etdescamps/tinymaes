@@ -62,10 +62,10 @@ void TINYMAES_Reset(TINYMAES_S *maes);
 //   idx[mu] -> best individiual ordered from the best to the worst
 //              (if idx == NULL, it regenerates X using the same mean and covariance)
 // Return the vectors of X
-double *TINYMAES_NextStep(TINYMAES_S *maes, int *orderIdx);
+const double *TINYMAES_NextStep(TINYMAES_S *maes, int *orderIdx);
 
 // Resample a selected interval of individuals (for handling a rare constraint)
-double *TINYMAES_Resample(TINYMAES_S *maes, int id0, int nIds);
+const double *TINYMAES_Resample(TINYMAES_S *maes, int id0, int nIds);
 
 // Set initial start point
 void TINYMAES_SetX0(TINYMAES_S *maes, double *x0);

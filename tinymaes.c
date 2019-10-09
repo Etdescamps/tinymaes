@@ -93,6 +93,7 @@ void TINYMAES_Reset(TINYMAES_S *maes) {
     maes->M[i+maes->nDim*i] = 1;
   memset(maes->ps, 0, sizeof(double)*maes->nDim);
   memset(maes->X0, 0, sizeof(double)*maes->nDim);
+  maes->nStep = 0;
 }
 
 void TINYMAES_Free(TINYMAES_S *maes) {
@@ -105,7 +106,7 @@ void TINYMAES_SetX0(TINYMAES_S *maes, double *x0) {
     maes->X0[i] = x0[i];
 }
 
-double *TINYMAES_NextStep(TINYMAES_S *maes, int *idx) {
+const double *TINYMAES_NextStep(TINYMAES_S *maes, int *idx) {
   int i, j, k;
   double s, a, b;
   if(idx) {
@@ -176,7 +177,7 @@ double *TINYMAES_NextStep(TINYMAES_S *maes, int *idx) {
   return TINYMAES_Resample(maes, 0, maes->lambda);
 }
 
-double *TINYMAES_Resample(TINYMAES_S *maes, int id0, int nIds) {
+const double *TINYMAES_Resample(TINYMAES_S *maes, int id0, int nIds) {
   double *Z = &maes->Z[id0*maes->nDim], *X = &maes->X[id0*maes->nDim];
   double s;
   int i, j, k;
